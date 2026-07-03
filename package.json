@@ -1,0 +1,16 @@
+{
+  "name": "galaxy-photo",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generateImages.js",
+    "dev": "npm run generate && vite",
+    "build": "npm run generate && vite build"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "vite": "^8.1.3"
+  }
+}
