@@ -2,41 +2,48 @@ import * as THREE from "three";
 
 export const loadingManager = new THREE.LoadingManager();
 
-// Vite tự động lấy base URL từ file vite.config.js (hiện tại đang là './')
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = import.meta.env.BASE_URL || "/";
 
-// Hàm tự động chuẩn hóa đường dẫn tài nguyên tĩnh
 export function fixUrl(path) {
-    // Loại bỏ dấu '/' ở đầu chuỗi (nếu có) để tránh lỗi ghép sai thành .//images...
-    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return `${baseUrl}${cleanPath}`;
+  const cleanPath = String(path).replace(/^\/+/, "");
+
+  if (/^(https?:)?\/\//i.test(cleanPath) || cleanPath.startsWith("data:")) {
+    return cleanPath;
+  }
+
+  return new URL(`${baseUrl}${cleanPath}`, document.baseURI).href;
 }
 
-loadingManager.onStart = function (url, itemsLoaded, itemsTotal) {
-    console.log(`🚀 Bắt đầu tải tài nguyên: ${url}`);
+function setLoadingText(message) {
+  const loadText = document.getElementById("load-text");
+  if (loadText) {
+    loadText.textContent = message;
+  }
+}
+
+loadingManager.onStart = function (url) {
+  console.log("Start loading:", url);
 };
 
-loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
-    const progressPercent = Math.round((itemsLoaded / itemsTotal) * 100);
-    const loadText = document.getElementById("load-text");
-    if (loadText) {
-        loadText.innerText = `Đang nạp dữ liệu không gian... ${progressPercent}%`;
-    }
+loadingManager.onProgress = function (_url, itemsLoaded, itemsTotal) {
+  const progressPercent = Math.round((itemsLoaded / itemsTotal) * 100);
+  setLoadingText(`Dang nap du lieu khong gian... ${progressPercent}%`);
 };
 
 loadingManager.onLoad = function () {
-    console.log("🎉 Tất cả tài nguyên đã sẵn sàng!");
-    const loadText = document.getElementById("load-text");
-    const enterBtn = document.getElementById("enter-btn");
-    
-    if (loadText && enterBtn) {
-        loadText.innerText = "Hệ thống vũ trụ đã nạp hoàn tất!";
-        enterBtn.style.display = "block";
-    }
+  console.log("All assets are ready.");
+  setLoadingText("He thong vu tru da nap hoan tat!");
+
+  const enterBtn = document.getElementById("enter-btn");
+  if (enterBtn) {
+    enterBtn.disabled = false;
+    enterBtn.style.display = "inline-flex";
+  }
 };
 
 loadingManager.onError = function (url) {
-    console.error(`❌ Có lỗi xảy ra khi tải tệp: ${url}`);
+  console.error("Cannot load asset:", url);
+  setLoadingText("Co tep anh hoac nhac khong tai duoc. Hay kiem tra ten file tren GitHub.");
 };
 
 export const textureLoader = new THREE.TextureLoader(loadingManager);

@@ -9,11 +9,52 @@ scene.add(gallery);
 const cards = [];
 const targetQuaternion = new THREE.Quaternion();
 
+function createFallbackTexture(label) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 680;
+
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, "#24143a");
+  gradient.addColorStop(1, "#040713");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "rgba(255, 187, 251, 0.8)";
+  ctx.lineWidth = 8;
+  ctx.strokeRect(28, 28, canvas.width - 56, canvas.height - 56);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "32px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("Image not found", canvas.width / 2, canvas.height / 2 - 20);
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+  ctx.font = "22px sans-serif";
+  ctx.fillText(label, canvas.width / 2, canvas.height / 2 + 26);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
 export function createPhotos() {
   const radius = 20;
 
   imageList.forEach((url, i) => {
-    const texture = textureLoader.load(fixUrl(url));
+    const textureUrl = fixUrl(url);
+    const texture = textureLoader.load(
+      textureUrl,
+      undefined,
+      undefined,
+      () => {
+        console.error("Photo failed to load:", textureUrl);
+        photo.material.map = createFallbackTexture(url);
+        photo.material.needsUpdate = true;
+      }
+    );
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.minFilter = THREE.LinearFilter;
     texture.generateMipmaps = false;

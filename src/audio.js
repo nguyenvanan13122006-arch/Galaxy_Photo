@@ -1,38 +1,73 @@
 import * as THREE from "three";
 import { camera } from "./scene.js";
-import { audioLoader, fixUrl } from "./loaders.js"; 
+import { audioLoader, fixUrl } from "./loaders.js";
 
+let listener;
 let backgroundSound;
+let audioReady = false;
+let startRequested = false;
+
+function updateHud(message) {
+  const subtitle = document.querySelector(".cosmic-hud p");
+  if (subtitle) {
+    subtitle.textContent = message;
+  }
+}
+
+async function startMusic() {
+  startRequested = true;
+
+  if (!backgroundSound || !audioReady) {
+    updateHud("Dang chuan bi nhac nen...");
+    return;
+  }
+
+  const context = listener?.context;
+  if (context?.state === "suspended") {
+    await context.resume();
+  }
+
+  if (!backgroundSound.isPlaying) {
+    backgroundSound.play();
+    updateHud("Nhac nen dang phat...");
+  }
+}
+
+export function requestAudioStart() {
+  startMusic().catch((error) => {
+    console.error("Cannot start background music:", error);
+    updateHud("Trinh duyet dang chan nhac nen. Hay cham man hinh them mot lan.");
+  });
+}
 
 export function initAudio() {
-    const listener = new THREE.AudioListener();
-    camera.add(listener);
+  listener = new THREE.AudioListener();
+  camera.add(listener);
 
-    backgroundSound = new THREE.Audio(listener);
+  backgroundSound = new THREE.Audio(listener);
 
-    // Sử dụng fixUrl để Vite tự nối path chuẩn
-    audioLoader.load(fixUrl('space-bgm.mp3'), function(buffer) { 
-        backgroundSound.setBuffer(buffer);
-        backgroundSound.setLoop(true);       
-        backgroundSound.setVolume(0.4);      
-        console.log("🎵 Nhạc nền vũ trụ đã sẵn sàng bộ đệm!");
-    }, 
-    undefined, 
-    function(err) {
-        console.error("❌ Lỗi không tải được file nhạc, hãy kiểm tra lại đường dẫn:", err);
-    });
+  audioLoader.load(
+    fixUrl("space-bgm.mp3"),
+    (buffer) => {
+      backgroundSound.setBuffer(buffer);
+      backgroundSound.setLoop(true);
+      backgroundSound.setVolume(0.4);
+      audioReady = true;
+      console.log("Background music loaded.");
 
-    const startMusic = () => {
-        if (backgroundSound && !backgroundSound.isPlaying && backgroundSound.buffer) {
-            backgroundSound.play();
-            window.removeEventListener("click", startMusic);
-            window.removeEventListener("pointerdown", startMusic);
-            
-            const uiSubtitle = document.querySelector(".cosmic-ui p");
-            if (uiSubtitle) uiSubtitle.innerText = "Hệ thống đang phát nhạc nền... 🌌";
-        }
-    };
+      if (startRequested) {
+        requestAudioStart();
+      }
+    },
+    undefined,
+    (error) => {
+      console.error("Cannot load background music:", error);
+      updateHud("Khong tai duoc nhac nen. Hay kiem tra file space-bgm.mp3.");
+    }
+  );
 
-    window.addEventListener("click", startMusic);
-    window.addEventListener("pointerdown", startMusic);
+  window.addEventListener("galaxy:start", requestAudioStart);
+  window.addEventListener("pointerdown", requestAudioStart, { once: true });
+  window.addEventListener("touchend", requestAudioStart, { once: true });
+  window.addEventListener("keydown", requestAudioStart, { once: true });
 }
