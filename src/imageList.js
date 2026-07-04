@@ -1,5 +1,3 @@
-
-// file: imageList.js
 const photoUrls = [
   "images/planet1.jpg",
   "images/planet2.jpg",

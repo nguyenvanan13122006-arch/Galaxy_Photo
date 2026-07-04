@@ -10,8 +10,8 @@ export function initAudio() {
 
     backgroundSound = new THREE.Audio(listener);
 
-    // Sửa lỗi: Bọc fixUrl quanh file nhạc nền
-    audioLoader.load(fixUrl('/space-bgm.mp3'), function(buffer) { 
+    // Truyền đường dẫn dạng tương đối tương thích hoàn toàn với fixUrl
+    audioLoader.load(fixUrl('space-bgm.mp3'), function(buffer) { 
         backgroundSound.setBuffer(buffer);
         backgroundSound.setLoop(true);       
         backgroundSound.setVolume(0.4);      
