@@ -10,7 +10,7 @@ export function initAudio() {
 
     backgroundSound = new THREE.Audio(listener);
 
-    // Truyền đường dẫn dạng tương đối tương thích hoàn toàn với fixUrl
+    // Sửa lỗi: Loại bỏ hoàn toàn dấu gạch chéo / ở đầu tệp nhạc nền
     audioLoader.load(fixUrl('space-bgm.mp3'), function(buffer) { 
         backgroundSound.setBuffer(buffer);
         backgroundSound.setLoop(true);       
