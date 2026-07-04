@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import imageList from "./imageList.js";
 import { scene } from "./scene.js";
+// Sửa lỗi: Import textureLoader chuẩn và hàm sửa đường dẫn
+import { textureLoader, fixUrl } from "./loaders.js"; 
 
-const loader = new THREE.TextureLoader();
 const gallery = new THREE.Group();
 scene.add(gallery);
 
@@ -12,9 +13,9 @@ export function createPhotos() {
     const radius = 20; 
 
     imageList.forEach((url, i) => {
-        const texture = loader.load(url);
+        // Sửa lỗi: Gọi textureLoader chung và bao bọc bằng fixUrl()
+        const texture = textureLoader.load(fixUrl(url));
         
-        // Khử mờ ảnh tuyệt đối
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.minFilter = THREE.LinearFilter; 
         texture.generateMipmaps = false;       
@@ -66,10 +67,9 @@ export function createPhotos() {
             angle: angle,
             radius: radius,
             baseY: baseY, 
-            // Giảm tốc độ di chuyển để ảnh bay chậm rãi, dịu dàng hơn
             speed: THREE.MathUtils.randFloat(0.0003, 0.0008), 
             floatOffset: Math.random() * Math.PI * 2,
-            floatSpeed: THREE.MathUtils.randFloat(0.004, 0.008) // Giảm tốc độ bồng bềnh
+            floatSpeed: THREE.MathUtils.randFloat(0.004, 0.008)
         };
 
         gallery.add(group);
@@ -77,11 +77,9 @@ export function createPhotos() {
     });
 }
 
-// Tạo sẵn các biến tạm ngoài vòng lặp để tối ưu hiệu năng
 const targetQuaternion = new THREE.Quaternion();
 
 export function updateGallery(activeCamera) {
-    // Gallery tổng thể xoay cực kỳ chậm
     gallery.rotation.y += 0.00005;
 
     if (!activeCamera) return;
@@ -91,24 +89,17 @@ export function updateGallery(activeCamera) {
     cards.forEach(card => {
         const d = card.userData;
 
-        // 1. Cập nhật vị trí tịnh tiến chậm rãi quanh hành tinh hồng
         d.angle += d.speed;
         card.position.x = Math.cos(d.angle) * d.radius;
         card.position.z = Math.sin(d.angle) * d.radius;
 
-        // 2. Hiệu ứng lơ lửng lên xuống nhịp nhàng, êm ái hơn bản cũ
         card.position.y = d.baseY + Math.sin(time * d.floatSpeed + d.floatOffset) * 0.25;
 
-        // 3. HIỆU ỨNG GÓC XOAY THEO MẮT QUÁN TÍNH (Mượt mà không trễ nhịp)
-        // Copy góc xoay chuẩn của camera
         targetQuaternion.copy(activeCamera.quaternion);
         
-        // Khử chuyển động xoay Y của nhóm cha để ảnh không lệch
         card.quaternion.copy(targetQuaternion);
         card.rotation.y -= gallery.rotation.y;
 
-        // 4. HIỆU ỨNG BỔ SUNG: Nghiêng lắc nhẹ (Roll) tạo sự sống động mềm mại
-        // Ảnh sẽ đung đưa nhẹ sang trái/phải một góc cực nhỏ giống như đang trôi trong nước
         card.rotation.z += Math.sin(time * 0.002 + d.floatOffset) * 0.04;
     });
 }

@@ -1,12 +1,17 @@
-// src/imageList.js
 const photoUrls = [
-  "/images/planet1.png",
-  "/images/planet2.png",
-  "/images/planet3.png",
-  "/images/planet4.png",
-  "/images/planet5.png",
-  "/images/planet6.png",
-  "/images/planet7.png"
+  "/images/planet1.jpg",
+  "/images/planet2.jpg",
+  "/images/planet3.jpg",
+  "/images/planet4.jpg",
+  "/images/planet5.jpg",
+  "/images/planet6.jpg",
+  "/images/planet7.jpg",
+  "/images/planet8.jpg",
+  "/images/planet9.jpg",
+  "/images/planet10.jpg",
+  "/images/planet11.jpg",
+  "/images/planet12.jpg",
+  "/images/planet13.jpg"
 ];
 
 export default photoUrls;
