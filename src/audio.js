@@ -1,38 +1,51 @@
 import * as THREE from "three";
 import { camera } from "./scene.js";
-import { audioLoader, fixUrl } from "./loaders.js"; 
+import { audioLoader, fixUrl } from "./loaders.js";
 
-let backgroundSound;
+let backgroundSound = null;
+let audioInitialized = false;
+
+function startMusicOnce() {
+  if (!backgroundSound || !backgroundSound.buffer || backgroundSound.isPlaying) return;
+
+  backgroundSound.play();
+
+  const uiSubtitle = document.querySelector(".cosmic-ui p");
+  if (uiSubtitle) {
+    uiSubtitle.innerText = "Hệ thống đang phát nhạc nền... 🌌";
+  }
+
+  window.removeEventListener("click", startMusicOnce);
+  window.removeEventListener("pointerdown", startMusicOnce);
+  window.removeEventListener("touchstart", startMusicOnce);
+}
 
 export function initAudio() {
-    const listener = new THREE.AudioListener();
-    camera.add(listener);
+  if (audioInitialized) return;
+  audioInitialized = true;
 
-    backgroundSound = new THREE.Audio(listener);
+  const listener = new THREE.AudioListener();
+  camera.add(listener);
 
-    // Sửa lỗi: Loại bỏ hoàn toàn dấu gạch chéo / ở đầu tệp nhạc nền
-    audioLoader.load(fixUrl('space-bgm.mp3'), function(buffer) { 
-        backgroundSound.setBuffer(buffer);
-        backgroundSound.setLoop(true);       
-        backgroundSound.setVolume(0.4);      
-        console.log("🎵 Nhạc nền vũ trụ đã sẵn sàng bộ đệm!");
-    }, 
-    undefined, 
-    function(err) {
-        console.error("Lỗi không tải được file nhạc, hãy kiểm tra lại đường dẫn:", err);
-    });
+  backgroundSound = new THREE.Audio(listener);
 
-    const startMusic = () => {
-        if (backgroundSound && !backgroundSound.isPlaying && backgroundSound.buffer) {
-            backgroundSound.play();
-            window.removeEventListener("click", startMusic);
-            window.removeEventListener("pointerdown", startMusic);
-            
-            const uiSubtitle = document.querySelector(".cosmic-ui p");
-            if (uiSubtitle) uiSubtitle.innerText = "Hệ thống đang phát nhạc nền... 🌌";
-        }
-    };
+  audioLoader.load(
+    fixUrl("space-bgm.mp3"),
+    (buffer) => {
+      backgroundSound.setBuffer(buffer);
+      backgroundSound.setLoop(true);
+      backgroundSound.setVolume(0.4);
 
-    window.addEventListener("click", startMusic);
-    window.addEventListener("pointerdown", startMusic);
+      console.log("🎵 Nhạc nền đã sẵn sàng!");
+
+      // Trình duyệt chặn autoplay, nên cần user interaction
+      window.addEventListener("click", startMusicOnce);
+      window.addEventListener("pointerdown", startMusicOnce);
+      window.addEventListener("touchstart", startMusicOnce);
+    },
+    undefined,
+    (err) => {
+      console.error("Lỗi không tải được file nhạc:", err);
+    }
+  );
 }

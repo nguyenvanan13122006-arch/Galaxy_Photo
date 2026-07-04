@@ -2,10 +2,12 @@ import { defineConfig } from "vite";
 
 export default defineConfig(({ command }) => {
   return {
-    // Tự động thêm tiền tố /Galaxy_Photo/ khi build và giữ nguyên '/' khi chạy dev ở máy
-    base: command === 'build' ? '/Galaxy_Photo/' : '/',
+    // Đổi base theo đúng tên repository GitHub Pages
+    // Nếu repo là https://username.github.io/Galaxy_Photo/ thì giữ nguyên như dưới
+    base: command === "build" ? "/Galaxy_Photo/" : "/",
+
     server: {
-      open: true
-    }
+      open: true,
+    },
   };
 });
