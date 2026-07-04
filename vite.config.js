@@ -1,13 +1,10 @@
 import { defineConfig } from "vite";
 
-export default defineConfig(({ command }) => {
-  return {
-    // Đổi base theo đúng tên repository GitHub Pages
-    // Nếu repo là https://username.github.io/Galaxy_Photo/ thì giữ nguyên như dưới
-    base: command === "build" ? "/Galaxy_Photo/" : "/",
-
-    server: {
-      open: true,
-    },
-  };
+export default defineConfig({
+  // Đặt base là './' sẽ giúp đường dẫn tự động dùng dạng tương đối.
+  // Nhờ đó, code sẽ tự chạy được bất kể tên repo GitHub của bạn là gì.
+  base: './',
+  server: {
+    open: true
+  }
 });

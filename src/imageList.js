@@ -11,7 +11,7 @@ const photoUrls = [
   "images/planet10.jpg",
   "images/planet11.jpg",
   "images/planet12.jpg",
-  "images/planet13.jpg",
+  "images/planet13.jpg"
 ];
 
 export default photoUrls;
