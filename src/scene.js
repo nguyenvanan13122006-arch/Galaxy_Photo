@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x03040d);
+scene.background = new THREE.Color(0x050414);
 
 //================ CAMERA =================
 
@@ -44,7 +44,7 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
-renderer.toneMappingExposure = 1.25;
+renderer.toneMappingExposure = 1.35;
 
 document.body.appendChild(renderer.domElement);
 
@@ -75,8 +75,8 @@ controls.maxDistance = 120;
 
 const ambient = new THREE.AmbientLight(
 
-    0xffffff,
-    1.6
+    0xfff0fb,
+    1.75
 
 );
 
@@ -105,8 +105,8 @@ scene.add(keyLight);
 
 const pinkLight = new THREE.PointLight(
 
-    0xff88ff,
-    180,
+    0xff9ad8,
+    210,
     120
 
 );
@@ -125,8 +125,8 @@ scene.add(pinkLight);
 
 const blueLight = new THREE.PointLight(
 
-    0x77aaff,
-    120,
+    0x8af4ff,
+    145,
     120
 
 );

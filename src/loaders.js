@@ -27,12 +27,12 @@ loadingManager.onStart = function (url) {
 
 loadingManager.onProgress = function (_url, itemsLoaded, itemsTotal) {
   const progressPercent = Math.round((itemsLoaded / itemsTotal) * 100);
-  setLoadingText(`Dang nap du lieu khong gian... ${progressPercent}%`);
+  setLoadingText(`Đang nạp ánh sáng và ký ức... ${progressPercent}%`);
 };
 
 loadingManager.onLoad = function () {
   console.log("All assets are ready.");
-  setLoadingText("He thong vu tru da nap hoan tat!");
+  setLoadingText("Dải ngân hà đã sẵn sàng cho bạn.");
 
   const enterBtn = document.getElementById("enter-btn");
   if (enterBtn) {
@@ -43,7 +43,7 @@ loadingManager.onLoad = function () {
 
 loadingManager.onError = function (url) {
   console.error("Cannot load asset:", url);
-  setLoadingText("Co tep anh hoac nhac khong tai duoc. Hay kiem tra ten file tren GitHub.");
+  setLoadingText("Có tệp ảnh hoặc nhạc chưa tải được. Hãy kiểm tra tên file trên GitHub.");
 };
 
 export const textureLoader = new THREE.TextureLoader(loadingManager);

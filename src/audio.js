@@ -27,7 +27,7 @@ function createAudioElement() {
 
   audio.addEventListener("error", () => {
     console.error("Cannot load background music:", audio.currentSrc);
-    updateHud("Khong tai duoc nhac nen. Hay kiem tra file space-bgm.mp3.");
+    updateHud("Không tải được nhạc nền. Hãy kiểm tra file space-bgm.mp3.");
   });
 
   document.body.appendChild(audio);
@@ -45,10 +45,10 @@ async function playMusic() {
     backgroundMusic.muted = false;
     backgroundMusic.currentTime = backgroundMusic.currentTime || 0;
     await backgroundMusic.play();
-    updateHud("Nhac nen dang phat...");
+    updateHud("Nhạc nền đang ngân giữa dải sao...");
   } catch (error) {
     console.error("Cannot start background music:", error);
-    updateHud("Hay cham man hinh them mot lan de bat nhac nen.");
+    updateHud("Chạm thêm một lần để đánh thức bản nhạc nền.");
   }
 }
 
